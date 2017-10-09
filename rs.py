@@ -128,10 +128,13 @@ def comparison(data, database, measures):
     
     print "Recommendation to item by pearson {}" .format(m_pearson)
     
-    x = {}
+    x = {"":[]}
     for name in m_pearson:
-        x = {"name[1]":[] }
-        
+        for name2 in m_manhattan:
+            for name3 in m_euclidean:
+                if (name[1]==name2[1])and (name[1]==name3[1]):
+                    x = {name[1]:[name[0],name2[0],name3[0]] }
+        print x
         
     #print "Recommendation to item by Cosine Similarity {}" .format(m_manhattan)
     #print "Recommendation to item by euclidean {}" .format(m_euclidean)
