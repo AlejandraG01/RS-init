@@ -11,7 +11,7 @@ users = {"Angelica": {"Blues Traveler": 3.5, "Broken Bells": 2.0, "Norah Jones":
 "Veronica": {"Blues Traveler": 3.0, "Norah Jones": 5.0, "Phoenix": 4.0, "Slightly Stoopid": 2.5, "The Strokes": 3.0}}
 
 
-"""Computes the Manhattan distance or cosine similarity. Both rating1 and rating2 are dictionaries of the form {The Strokes: 3.0, Slightly Stoopid: 2.5}"""
+"""Computes the Manhattan distance . Both rating1 and rating2 are dictionaries of the form {The Strokes: 3.0, Slightly Stoopid: 2.5}"""
 
 def manhattan (rating1, rating2):
     distance = 0
@@ -57,7 +57,7 @@ def pearson(rating1, rating2):
             sum_x2 += x**2
             sum_y2 += y**2
     #now compute denominator
-    denominator = math.sqrt(sum_x2- (sum_x**2) / n) * math.sqrt(sum_y2 - (sum_y**2) /n)
+    denominator = math.sqrt(sum_x2- (sum_x**2)/n) * math.sqrt(sum_y2 - (sum_y**2)/n)
     if denominator == 0:
         return 0
     else:
@@ -74,10 +74,10 @@ def computeNearestNeighbor(username, users, measure):
     for user in users:
         if user != username:
             #distance = manhattan(users[user],users[username])
-            distance = measure(users[user],users[username])
+            distance = measure(users[user],users[username]) ## so aplica para manhattan
             distances.append((distance, user))
+    #distances.sort(reverse=True)
     distances.sort()
-    
     return distances
 
 
@@ -90,15 +90,47 @@ def recommend (username, users, measure):
     recommendations = []
     #now find bands Neighbor rated that user didn't
     NeighborRatings = users[nearest] #take the itens with ratings (item, rating) of neighbor
-    print "Ratings dos vizinhos: {}" .format(NeighborRatings)
+    print "Ratings do vizinho Mais cercano {}: {} \n" .format(nearest,NeighborRatings)
     userRatings = users[username] # take the itens with ratings of user to recommender
-    print "Ratings do usuario {}" .format(userRatings)
+    print "Ratings do usuario {} \n" .format(userRatings)
     for artist in NeighborRatings: 
         if not artist in userRatings:
             recommendations.append((artist,NeighborRatings[artist]))
     recommendations.sort(key=lambda artistTuple: artistTuple[1], reverse = True)
     return recommendations
 
+def comparison(data, database, measures):
+    
+    m_pearson = computeNearestNeighbor(data, database, measures[0])
+    m_manhattan = computeNearestNeighbor(data, database, measures[1])
+    m_euclidean = computeNearestNeighbor(data, database, measures[2])
+    
+     
+    x = {"":{}}
+    for name in m_pearson:
+        for name2 in m_manhattan:
+            for name3 in m_euclidean:
+                if (name[1]==name2[1])and (name[1]==name3[1]):
+                    x = {name[1]:{"Pearson":name[0], "Manhattan":name2[0], "Euclidean":name3[0]} }
+        print x
+        
+        
+    #print "Recommendation to item by Cosine Similarity {}" .format(m_manhattan)
+    #print "Recommendation to item by euclidean {}" .format(m_euclidean)
+    
+    #for data in bd:
+        
+
+measures_vector = [pearson, manhattan, euclidean]
+
+"""PRINTS"""
+print "comparacion {} \n" .format(comparison("Bill", users, measures_vector))
+print "NearestNeighbor {} \n" .format(computeNearestNeighbor("Bill", users, manhattan ))
+print "RECOMENDACION {} \n" .format(recommend("Bill", users, manhattan))
+
+#print "tranformacion {} \n" .format(movies)
+
+######ITEM BASED RECOMENDATION
 
 prefers = {"lisa Rose":{"Lady in the Whater":2.5, "Snakes on a Plane":3.5}, \
            "Gene Seymour":{"Lady in the Whater":3, "Snakes on a Plane":3.5}
@@ -117,43 +149,30 @@ def transformPrefs(prefers):
 
 
 
-movies = transformPrefs(users)
-measures_vector = [pearson, manhattan, euclidean]
+movies = transformPrefs(prefers)
 
-def comparison(data, database, measures):
+def calculateSimilarityItem(pref, sim_distance=manhattan):
+    #create a dictionary the items showing which other items they are more similar to.
+    results={}
     
-    m_pearson = computeNearestNeighbor(data, database, measures[0])
-    m_manhattan = computeNearestNeighbor(data, database, measures[1])
-    m_euclidean = computeNearestNeighbor(data, database, measures[2])
+    #
+    itemPrefs=transformPrefs(prefs)
+    c=0
+    for item in itemPrefs:
+        c+=1
+        if c%100==0: print "{} " .format(c, len(itemPrefs))
+            scores= computeNearestNeighbor(item, itemPrefs, sim_distance)
+            result[item]=scores
+            
+    return result
+
+            
+            
+            
     
-    print "Recommendation to item by pearson {}" .format(m_pearson)
     
-    x = {"":[]}
-    for name in m_pearson:
-        for name2 in m_manhattan:
-            for name3 in m_euclidean:
-                if (name[1]==name2[1])and (name[1]==name3[1]):
-                    x = {name[1]:[name[0],name2[0],name3[0]] }
-        print x
-        
-    #print "Recommendation to item by Cosine Similarity {}" .format(m_manhattan)
-    #print "Recommendation to item by euclidean {}" .format(m_euclidean)
     
-    #for data in bd:
-        
-
-
-"""PRINTS"""
-print "Distancia manhattan {}" .format(manhattan(users["Bill"], users["Veronica"]))
-print "Distancia euclideana {}" .format(euclidean(users["Bill"], users["Veronica"]))
-print "NearestNeighbor {}" .format(computeNearestNeighbor("Bill", users, manhattan ))
-print "O vizinho: {}" .format(computeNearestNeighbor("Bill", users, euclidean)[0][1])
-print "recommendation {}" .format(recommend("Bill", users, euclidean))
-print "Correlacao Pearson {}" .format(pearson(users["Bill"], users["Angelica"]))
-print "Correlacao entre usuarios {}" .format(pearson(users["Veronica"], users["Angelica"]))
-print "Correlacao entre usuarios {}" .format(pearson(users["Hailey"], users["Angelica"]))
-
-print "tranformacion {}" .format(movies)
-
-print "comparacion {}" .format(comparison("Blues Traveler", movies, measures_vector))
-
+    
+    
+    
+    
