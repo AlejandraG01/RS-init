@@ -83,7 +83,7 @@ def computeNearestNeighbor(username, users, measure):
 
 """ creates a recommendation"""
 """Give a list of recommendations"""
-def recommend (username, users, measure):
+def recommendation(username, users, measure):
     #first find the nearest Neighbor
     nearest = computeNearestNeighbor(username,users, measure)[0][1] #identifine the first neighbor
     
@@ -123,17 +123,13 @@ def comparison(data, database, measures):
 
 measures_vector = [pearson, manhattan, euclidean]
 
-"""PRINTS"""
-print "comparacion {} \n" .format(comparison("Bill", users, measures_vector))
-print "NearestNeighbor {} \n" .format(computeNearestNeighbor("Bill", users, manhattan ))
-print "RECOMENDACION {} \n" .format(recommend("Bill", users, manhattan))
 
 #print "tranformacion {} \n" .format(movies)
 
 ######ITEM BASED RECOMENDATION
 
-prefers = {"lisa Rose":{"Lady in the Whater":2.5, "Snakes on a Plane":3.5}, \
-           "Gene Seymour":{"Lady in the Whater":3, "Snakes on a Plane":3.5}
+prefers = {"lisa Rose":{"Lady in the Whater":1, "Snakes on a Plane":3.5}, \
+           "Gene Seymour":{"Lady in the Whater":5, "Snakes on a Plane":3.5}
                  
         }
 
@@ -149,28 +145,71 @@ def transformPrefs(prefers):
 
 
 
-movies = transformPrefs(prefers)
 
-def calculateSimilarityItem(pref, sim_distance=manhattan):
+def calculateSimilarityItem(prefs, sim_distance=manhattan):
     #create a dictionary the items showing which other items they are more similar to.
     results={}
     
     #
     itemPrefs=transformPrefs(prefs)
+    print "{} \n" .format(itemPrefs)
     c=0
     for item in itemPrefs:
         c+=1
-        if c%100==0: print "{} " .format(c, len(itemPrefs))
-            scores= computeNearestNeighbor(item, itemPrefs, sim_distance)
-            result[item]=scores
+        if c%100==0: 
+            print "{} \n" .format(c, len(itemPrefs))
+        scores = computeNearestNeighbor(item, itemPrefs, measure=sim_distance)
+        results[item]=scores
             
-    return result
+    return results
 
+itemsim = calculateSimilarityItem(users)
+
+print "calculo de similaridade item {}".format(itemsim)
+           
             
             
-            
+def recommend(username, users, similarities, n=3):
+    scores = {}
+    total_sim = {}
+    #now get the rating for the user
+    userRatings = users[username]
+    for item, rating in userRatings.items():   
+        for sim, other_item in similarities[item]:
+        #ignore if this user has already rated this item
+            if other_item in userRatings:
+                continue 
+            #weighted sum of rating times similarity
+            scores.setdefault(other_item, 0.0)
+            scores[other_item] += sim * rating
+            #sum of all similarities
+            total_sim.setdefault(other_item, 0.0)
+            total_sim[other_item] += sim
+    #divide each total score by total weighting to get an average
+    recommendations = [(score/total_sim[item],item) for item,score in scores.items()] 
+    # finally sort and return 
+    recommendations.sort(key=lambda artistTuple: artistTuple[1], reverse = True) 
+    # Return the first n items return      
+    return recommendations[:n]
+
+"""PRINTS"""
+print "comparacion {} \n" .format(comparison("Bill", users, measures_vector))
+print "NearestNeighbor {} \n" .format(computeNearestNeighbor("Bill", users, manhattan ))
+print "RECOMENDACION baseado en usuario{} \n" .format(recommendation("Bill", users, manhattan))
+
+print "Recomendacao baseado em item {} \n".format(recommend("Bill",users, itemsim))
+        
+        
     
     
+    
+    
+    
+    
+    
+    
+    
+
     
     
     
