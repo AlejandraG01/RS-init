@@ -99,6 +99,8 @@ def recommendation(username, users, measure):
     recommendations.sort(key=lambda artistTuple: artistTuple[1], reverse = True)
     return recommendations
 
+
+measures_vector = [pearson, manhattan, euclidean]
 def comparison(data, database, measures):
     
     m_pearson = computeNearestNeighbor(data, database, measures[0])
@@ -121,7 +123,7 @@ def comparison(data, database, measures):
     #for data in bd:
         
 
-measures_vector = [pearson, manhattan, euclidean]
+
 
 
 #print "tranformacion {} \n" .format(movies)
@@ -202,12 +204,7 @@ print "Recomendacao baseado em item {} \n".format(recommend("Bill",users, itemsi
         
     
     
-    
-    
-    
-    
-    
-    
+
     
 
     
