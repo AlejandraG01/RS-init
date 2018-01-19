@@ -46,6 +46,7 @@ def computeEstimatedRatings(urm, U, S, Vt, uTest, K, test):
     estimatedRatings = np.zeros(shape=(MAX_UID, MAX_PID), dtype=np.float16)
     for userTest in uTest:
         prod = U[userTest, :]*rightTerm
+        print prod
         #we convert the vector to dense format in order to get the indices 
         #of the movies with the best estimated ratings 
         estimatedRatings[userTest, :] = prod.todense()
