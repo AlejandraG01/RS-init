@@ -85,7 +85,7 @@ def computeNearestNeighbor(username, users, measure):
 """Give a list of recommendations"""
 def recommendation(username, users, measure):
     #first find the nearest Neighbor
-    nearest = computeNearestNeighbor(username,users, measure)[0][1] #identifine the first neighbor
+    nearest = computeNearestNeighbor(username,users, measure)[0][1] #identify the first neighbor
     
     recommendations = []
     #now find bands Neighbor rated that user didn't
@@ -93,8 +93,10 @@ def recommendation(username, users, measure):
     print "Ratings do vizinho Mais cercano {}: {} \n" .format(nearest,NeighborRatings)
     userRatings = users[username] # take the itens with ratings of user to recommender
     print "Ratings do usuario {} \n" .format(userRatings)
+    #search the itens ratings which nearest neighbor have but the target user dont have
+    # to create the recommendation list
     for artist in NeighborRatings: 
-        if not artist in userRatings:
+        if not artist in userRatings: 
             recommendations.append((artist,NeighborRatings[artist]))
     recommendations.sort(key=lambda artistTuple: artistTuple[1], reverse = True)
     return recommendations
@@ -123,7 +125,10 @@ def comparison(data, database, measures):
     #for data in bd:
         
 
-
+"""PRINTS"""
+print "comparacion {} \n" .format(comparison("Bill", users, measures_vector))
+print "NearestNeighbor {} \n" .format(computeNearestNeighbor("Bill", users, manhattan ))
+print "RECOMENDACION baseado en usuario{} \n" .format(recommendation("Bill", users, manhattan))
 
 
 #print "tranformacion {} \n" .format(movies)
@@ -194,10 +199,7 @@ def recommend(username, users, similarities, n=3):
     # Return the first n items return      
     return recommendations[:n]
 
-"""PRINTS"""
-print "comparacion {} \n" .format(comparison("Bill", users, measures_vector))
-print "NearestNeighbor {} \n" .format(computeNearestNeighbor("Bill", users, manhattan ))
-print "RECOMENDACION baseado en usuario{} \n" .format(recommendation("Bill", users, manhattan))
+
 
 print "Recomendacao baseado em item {} \n".format(recommend("Bill",users, itemsim))
         
