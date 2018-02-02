@@ -78,7 +78,7 @@ def computeNearestNeighbor(username, users, measure):
             distances.append((distance, user))
     #distances.sort(reverse=True)
     distances.sort()
-    return distances
+    return distances #return a tuple (distance, user)
 
 
 """ creates a recommendation"""
