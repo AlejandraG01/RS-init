@@ -70,7 +70,7 @@ print pm.recommend(user_id)
 
 item_model = rs.item_similarity_recommender_py()
 item_model.create(train_data, 'user_id', 'song')
-
+print item_model
 #test with some users
 user_id = users[16]
 user_items = item_model.get_user_items(user_id)
