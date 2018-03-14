@@ -190,6 +190,9 @@ class item_similarity_recommender_py():
         ###############################################
         cooccurence_matrix = self.construct_cooccurence_matrix(user_songs, all_songs)
         
+        print "cooccurence matrix: {}" .format(cooccurence_matrix) 
+        print "numrows matrix: {} , numcols: {}" .format(len(cooccurence_matrix), len(cooccurence_matrix[0]))
+        #preciso enviar coocurrence para codigo de matriz factorization
         #######################################################
         #D. Use the cooccurence matrix to make recommendations
         #######################################################

@@ -4,6 +4,7 @@
 Created on Thu Mar  8 12:52:14 2018
 
 @author: aleja
+ref: http://www.quuxlabs.com/blog/2010/09/matrix-factorization-a-simple-tutorial-and-implementation-in-python/#viewSource
 """
 
 import numpy as np

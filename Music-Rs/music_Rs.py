@@ -70,9 +70,9 @@ print pm.recommend(user_id)
 
 item_model = rs.item_similarity_recommender_py()
 item_model.create(train_data, 'user_id', 'song')
-print item_model
+#print item_model
 #test with some users
-user_id = users[16]
+user_id = users[7]
 user_items = item_model.get_user_items(user_id)
 
 #Use the personalized model to make some song recommendations
@@ -88,31 +88,31 @@ print("Recommendation process going on:")
 print("----------------------------------------------------------------------")
 
 #Recommend songs for the user using personalized model
-item_model.recommend(user_id)
+print item_model.recommend(user_id)
 ################################################
 #Use the personalized model to make recommendations for the following user id. 
 #(Note the difference in recommendations from the first user id.)
-user_id = users[7]
+##user_id = users[7]
 #Fill in the code here
-user_items = item_model.get_user_items(user_id)
+##user_items = item_model.get_user_items(user_id)
 #
-print("------------------------------------------------------------------------------------")
-print("Training data songs for the user userid: %s:" % user_id)
-print("------------------------------------------------------------------------------------")
+#print("------------------------------------------------------------------------------------")
+#print("Training data songs for the user userid: %s:" % user_id)
+#print("------------------------------------------------------------------------------------")
 
-for user_item in user_items:
-    print(user_item)
+#for user_item in user_items:
+#    print(user_item)
 
-print("----------------------------------------------------------------------")
-print("Recommendation process going on:")
-print("----------------------------------------------------------------------")
+#print("----------------------------------------------------------------------")
+#print("Recommendation process going on:")
+#print("----------------------------------------------------------------------")
 
 #Recommend songs for the user using personalized model
-item_model.recommend(user_id)
+#item_model.recommend(user_id)
 
 #################################################i
 #Use the personalized recommender model to get similar songs for the following song.
-song = "Somebody To Love-Justin Bieber"
-item_model.get_similar_items([song])
+#song = "Somebody To Love-Justin Bieber"
+#item_model.get_similar_items([song])
 
 
