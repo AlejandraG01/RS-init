@@ -11,7 +11,7 @@ import numpy as np
 
 df = pd.DataFrame({'A': ['a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'c', 'c', 'c', 'c'],
                    'B': [1, 2, 3, 4, 6, 2, 3, 5, 5, 3, 1, 4],
-                   'C': np.random.randn(12)})
+                   'C': [0.5, 0.2, 0.1, 0.2, 0.5, 0.5, 0.0, 0.3, 0.2, 0.0, 0.0, 0.1 ]})
 
 #all users
 u = df['A'].unique()
@@ -26,14 +26,17 @@ u_id = u[1]
 print u_id
 
 #array all items
+#lista do total de items
 all_i = list(df['B'].unique())
 print all_i
 
 ##user data
+#save all informations of user u_id
 u_data = df[df['A'] == u_id]
 print "user data: {}".format(u_data)
 
 #user - items data array
+#create a list of items that user likes
 items_of_user = list(u_data['B'].unique())
 print "user-item data: {}" .format(items_of_user)
 
@@ -50,15 +53,19 @@ for x in range(0, len(items_of_user)):
     
 print "user item users: {} \n" .format(user_item_users)
 
+##coocurencia dos dados
 cooccurence_matrix = np.matrix(np.zeros(shape=(len(items_of_user), len(all_i))), float)
 
-
+#arrai que contem todos os usuarios q escutaram um determinado item
+total_item_users = []
 
 for y in range(0,len(all_i)):
-    total_item_data = df[df['B'] == all_i[y]]    
+    total_item_data = df[df['B'] == all_i[y]]   
+    #exporta o conjunto de usuarios que gostam do item na posição y do array all_i
     y_users_item = set(total_item_data['A'].unique())
     print "item {}: total users like: {} \n" .format(all_i[y], y_users_item)
     
+    total_item_users.append(y_users_item)
     for j in range(0,len(items_of_user)):
         j_users_items = user_item_users[j]
         print "**item_user {}:  users which like the item of user {}: {} \n" .format(items_of_user[j],u_id, j_users_items)
@@ -76,6 +83,43 @@ for y in range(0,len(all_i)):
             cooccurence_matrix[j,y] = 0
                     
 print "co-ocurrencia: {} \n" .format(cooccurence_matrix)
+
+
+def matrix_factorization(R, P, Q, K, steps=5000, alpha=0.0002, beta=0.02):
+    Q = Q.T
+    print Q
+    for step in xrange(steps):
+        for i in xrange(len(R)):
+            for j in xrange(len(R[i])):
+                if R[i][j] > 0:
+                    #calcular erro
+                    eij = R[i][j] - np.dot(P[i, : ], Q[: , j])
+                    for k in xrange(K):
+                        P[i][k] = P[i][k] + alpha * (2 * eij * Q[k][j] - beta * P[i][k])
+                        Q[k][j] = Q[k][j] + alpha * (2 * eij * P[i][k] - beta * Q[k][j])
+        eR = np.dot(P, Q)
+        ##função de optimização
+        e = 0
+        for i in xrange(len(R)):
+            for j in xrange(len(R[i])):
+                if R[i][j] > 0:
+                     e = e + pow(R[i][j] - np.dot(P[i,:],Q[:,j]), 2)
+                     for k in xrange(K):
+                         e = e + (beta/2) * (pow(P[i][k],2) + pow(Q[k][j],2))
+        if e < 0.001:
+            break
+    
+    return P, Q.T
+                
+k= 1 
+P = user_item_users
+Q = total_item_users 
+R = np.array(cooccurence_matrix)
+nP, nQ  = matrix_factorization(R, P, Q, k)
+nR = np.dot(nP, nQ.T)
+
+print "RESULTADO MATRIX FACTORIZATION: {}" .format(nR)
+
 
 
 print "suma: {}" .format(cooccurence_matrix.sum(axis=0))

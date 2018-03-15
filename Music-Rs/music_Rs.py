@@ -72,7 +72,7 @@ item_model = rs.item_similarity_recommender_py()
 item_model.create(train_data, 'user_id', 'song')
 #print item_model
 #test with some users
-user_id = users[7]
+user_id = users[10]
 user_items = item_model.get_user_items(user_id)
 
 #Use the personalized model to make some song recommendations
